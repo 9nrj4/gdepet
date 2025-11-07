@@ -1,0 +1,54 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Функции-помощники
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Правила для коллекции users
+    match /users/{userId} {
+      // Любой может читать профили пользователей
+      allow read: if true;
+      
+      // Только владелец может создавать и обновлять свой профиль
+      allow create, update: if isOwner(userId);
+      
+      // Никто не может удалять профили
+      allow delete: if false;
+      
+      // Подколлекция избранного
+      match /favorites/{petId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+    
+    // Правила для коллекции pets
+    match /pets/{petId} {
+      // Все могут читать активные объявления
+      allow read: if true;
+      
+      // Авторизованные пользователи могут создавать объявления
+      allow create: if isAuthenticated();
+      
+      // Только владелец может обновлять свои объявления
+      allow update: if isAuthenticated() && 
+                      resource.data.userId == request.auth.uid;
+      
+      // Только владелец может удалять свои объявления
+      allow delete: if isAuthenticated() && 
+                      resource.data.userId == request.auth.uid;
+    }
+    
+    // Запрет доступа ко всем остальным коллекциям
+    match /{document=**} {
+      allow read, write: if true; // Allow all reads and writes
+    }
+  }
+}

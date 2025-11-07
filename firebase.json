@@ -1,0 +1,26 @@
+{
+  "flutter": {
+    "platforms": {
+      "ios": {
+        "default": {
+          "projectId": "gde-pet",
+          "appId": "1:777709444767:ios:ac1bb136d635ea9f130caa",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "gde-pet",
+          "configurations": {
+            "ios": "1:777709444767:ios:ac1bb136d635ea9f130caa"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "indexes": "firestore.indexes.json",
+    "rules": "firestore.rules"
+  }
+}
